@@ -44,5 +44,23 @@ GROUP BY "products".description;
 -- Stretch
 
 --  9. How much was the total cost for each order?
+SELECT "orders".order_date, "orders".id AS "order id",
+       SUM("quantity" * "products".unit_price) AS "total cost"
+FROM "line_items"
+JOIN "orders" ON "orders".id = "line_items".order_id
+JOIN "products" ON "products".id = "line_items".product_id
+GROUP BY "orders".order_date, "orders".id
+ORDER BY "orders".order_date, "orders".id;
+
 -- 10. How much has each customer spent in total?
+SELECT CONCAT("customers".first_name, ' ', "customers".last_name) AS "customer",
+       SUM("quantity" * "products".unit_price) AS "total spent"
+FROM "line_items"
+JOIN "orders" ON "orders".id = "line_items".order_id
+JOIN "addresses" ON "addresses".id = "orders".address_id
+JOIN "customers" ON "customers".id = "addresses".customer_id
+JOIN "products" ON "products".id = "line_items".product_id
+GROUP BY "customer"
+ORDER BY "total spent" DESC;
+
 -- 11. How much has each customer spent in total? Customers who have spent $0 should still show up in the table. It should say 0, not NULL (research coalesce).
